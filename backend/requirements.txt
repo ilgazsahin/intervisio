@@ -1,2 +1,9 @@
-google-generativeai
-python-dotenv 
+openai
+fastapi
+uvicorn
+python-dotenv
+python-multipart
+PyMuPDF
+python-docx
+faster-whisper
+ 

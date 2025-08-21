@@ -29,7 +29,7 @@ export default function UploadPage() {
             const data = await res.json()
             if (data.extracted_text) {
                 localStorage.setItem('cv_extracted_text', data.extracted_text)
-                router.push('/generate')
+                router.push('/')
             } else {
                 setError('No text extracted from CV.')
             }
@@ -83,9 +83,6 @@ export default function UploadPage() {
                     ← Back to Home
                 </button>
             </Link>
-
-
-
         </div>
     )
 }
