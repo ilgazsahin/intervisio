@@ -21,21 +21,38 @@ export default function GenerateQuestionsPage() {
     setLoading(true)
     setError(null)
     setQuestions([])
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 60000) // 60s timeout
+
     try {
       const res = await fetch('http://localhost:8000/generate_questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cv_text: text ?? cvText }),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
+
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.detail || 'API error')
+        let detail = 'API error'
+        try {
+          const data = await res.json()
+          detail = data.detail || detail
+        } catch {}
+        throw new Error(detail)
       }
+
       const data = await res.json()
       setQuestions(data.questions)
     } catch (err: any) {
-      setError(err.message)
+      if (err?.name === 'AbortError') {
+        setError('Request timed out. Please try again.')
+      } else {
+        setError(err?.message || 'Unexpected error occurred')
+      }
     } finally {
+      clearTimeout(timeoutId)
       setLoading(false)
     }
   }
